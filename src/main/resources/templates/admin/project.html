@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>项目信息</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/default/easyui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/color.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/demo/demo.css}">
+    <script type="text/javascript" th:src="@{/lib/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/easyui/jquery.easyui.min.js}"></script>
+</head>
+<body>
+<div>
+    项目选择：
+    <input id="cc" name="state" style="width:200px;" value="">
+</div>
+
+<br>
+
+<table id="tb" title="项目文件" style="width:100%;height:500px"></table>
+<div id="toolbar">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="Download()">下载</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="uploadFile()">上传当日文件</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="uploadAssignFile()">上传至指定日期</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-no" plain="true" onclick="deleteFile()">删除</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-more" plain="true" onclick="preview()">预览</a>
+</div>
+
+<!--上传多个文件到当日-->
+<div id="f-form" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#f-buttons">
+    <div class="ftitle">文件信息</div>
+    <form id="fm" method="post" enctype="multipart/form-data">
+        <input name="prefix" type="hidden" class="easyui-validatebox" required="true" readonly>
+        <div class="fitem">
+            <label>文件:</label><br>
+            <input type="file" name="files" class="easyui-validatebox" required="true" multiple="multiple">
+        </div>
+        <div class="fitem">
+            <label>类型:<br>
+                <input name="type" class="easyui-validatebox" list="file_type" required="true" placeholder="请选择"
+                       autocomplete="off">
+            </label>
+            <datalist id="file_type">
+                <option>平面-CPⅠ网</option>
+                <option>平面-CPⅡ网</option>
+                <option>平面-CPⅢ网</option>
+                <option>水准-CPⅢ高程网</option>
+                <option>水准-线上加密水准网</option>
+                <option>水准-线下水准基点网</option>
+            </datalist>
+        </div>
+    </form>
+</div>
+<div id="f-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveEdit()">上传</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel"
+       onclick="$('#f-form').dialog('close')">取消</a>
+</div>
+
+<!--上传多个文件到指定目录-->
+<div id="file-form" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#ff-buttons">
+    <div class="ftitle">文件信息</div>
+    <form id="fam" method="post" enctype="multipart/form-data">
+        <input name="prefix" type="hidden" class="easyui-validatebox" required="true" readonly>
+        <div class="fitem">
+            <label>文件:<br>
+                <input type="file" name="files" class="easyui-validatebox" required="true" multiple="multiple">
+            </label>
+        </div>
+        <div class="fitem">
+            <label>类型:<br>
+                <input name="type" class="easyui-validatebox" list="file_type_date" required="true" placeholder="请选择"
+                       autocomplete="off">
+            </label>
+            <datalist id="file_type_date">
+                <option>平面-CPⅠ网</option>
+                <option>平面-CPⅡ网</option>
+                <option>平面-CPⅢ网</option>
+                <option>水准-CPⅢ高程网</option>
+                <option>水准-线上加密水准网</option>
+                <option>水准-线下水准基点网</option>
+            </datalist>
+        </div>
+        <div class="fitem">
+            <label>日期:</label>
+            <input id="dd" name="date" type="text" class="easyui-datebox" required="required">
+        </div>
+    </form>
+</div>
+<div id="ff-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveEdit()">上传</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel"
+       onclick="$('#file-form').dialog('close')">取消</a>
+</div>
+
+</body>
+<script th:src="@{/js/admin/project.js}"></script>
+</html>

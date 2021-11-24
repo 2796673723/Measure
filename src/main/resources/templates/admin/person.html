@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>人员信息</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/default/easyui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/color.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/demo/demo.css}">
+    <script type="text/javascript" th:src="@{/lib/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/easyui/jquery.easyui.min.js}"></script>
+</head>
+<body>
+
+<table id="dg" title="人员信息" class="easyui-datagrid" style="width:100%;height:600px"
+       url="./get_person"
+       toolbar="#toolbar" pagination="true"
+       rownumbers="true" fitColumns="true" singleSelect="true">
+    <thead>
+    <tr>
+        <th field="username" width="40">用户名</th>
+        <th field="password" width="40">密码</th>
+        <th field="mobile" width="40">手机号</th>
+        <th field="contractor" width="40">分包单位</th>
+        <th field="project" width="40">项目名称</th>
+    </tr>
+    </thead>
+</table>
+
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+       onclick="newUser()">添加人员</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true"
+       onclick="editUser()">编辑人员</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+       onclick="destroyUser()">删除人员</a>
+</div>
+
+
+<div id="dlg" class="easyui-dialog" style="width:300px;height:320px;padding:10px 10px"
+     closed="true" buttons="#dlg-buttons">
+    <form id="fm" method="post">
+        <div class="fitem">
+            <label>用户名:<br><input name="username" class="easyui-validatebox" required="true"></label>
+        </div>
+        <div class="fitem">
+            <label>密码:<br><input name="password" class="easyui-validatebox" required="true"></label>
+        </div>
+        <div class="fitem">
+            <label>手机号:<br><input name="mobile" class="easyui-validatebox" required="true"></label>
+        </div>
+        <div class="fitem">
+            <label>分包单位:<br><input name="contractor" class="easyui-validatebox" required="true"></label>
+        </div>
+        <div class="fitem">
+            <label>项目名称:<br><input name="project" class="easyui-validatebox" required="true"></label>
+        </div>
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveUser()">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel"
+       onclick="$('#dlg').dialog('close')">取消</a>
+</div>
+</body>
+<script th:src="@{/js/admin/person.js}"></script>
+</html>

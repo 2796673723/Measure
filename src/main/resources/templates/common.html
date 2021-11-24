@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Common</title>
+  </head>
+  <body>
+    <p>This is Common</p>
+    <div id="p1"></div>
+  </body>
+  <script th:inline="javascript">
+    let base =/*[[@{/common}]]*/;
+    let p = {
+        url: base + `hello:${1 + 1 + 2}`,
+        data: "hello",
+    };
+    document.getElementById("p1").innerHTML = p;
+    console.log(p);
+  </script>
+</html>

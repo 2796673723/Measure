@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>成绩列表</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      th:href="@{/lib/easyui/themes/default/easyui.css}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      th:href="@{/lib/easyui/themes/icon.css}"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      th:href="@{/lib/easyui/css/demo.css}"
+    />
+    <script
+      type="text/javascript"
+      th:src="@{/lib/easyui/jquery.min.js}"
+    ></script>
+    <script
+      type="text/javascript"
+      th:src="@{/lib/easyui/jquery.easyui.min.js}"
+    ></script>
+    <script
+      type="text/javascript"
+      th:src="@{/lib/easyui/js/validateExtends.js}"
+    ></script>
+    <script type="text/javascript" th:inline="javascript">
+      /*<![CDATA[*/
+      $(function () {
+        //datagrid初始化
+        $("#dataList").datagrid({
+          title: "测量文件导入",
+          iconCls: "icon-more", //图标
+          border: true,
+          collapsible: false, //是否可折叠的
+          fit: true, //自动大小
+          method: "post",
+          //此处先不去获取分数表
+          // url:[[@{/score/getScoreList}]],
+          idField: "id",
+          singleSelect: true, //是否单选
+          pagination: true, //分页控件
+          rownumbers: true, //行号
+          sortName: "id",
+          sortOrder: "DESC",
+          remoteSort: false,
+          columns: [
+            [
+              { field: "chk", checkbox: true, width: 50 },
+              { field: "id", title: "ID", width: 50 },
+              {
+                field: "studentId",
+                title: "文件名",
+                width: 200,
+                formatter: function (value, row, index) {
+                  if (row.studentId) {
+                    let studentList = $("#studentList").combobox("getData");
+                    for (let i = 0; i < studentList.length; i++) {
+                      //console.log(clazzList[i]);
+                      if (row.studentId === studentList[i].id)
+                        return studentList[i].username;
+                    }
+                    return row.studentId;
+                  } else {
+                    return "not found";
+                  }
+                },
+              },
+              {
+                field: "courseId",
+                title: "状态",
+                width: 200,
+                formatter: function (value, row, index) {
+                  if (row.courseId) {
+                    let courseList = $("#courseList").combobox("getData");
+                    for (let i = 0; i < courseList.length; i++) {
+                      //console.log(clazzList[i]);
+                      if (row.courseId === courseList[i].id)
+                        return courseList[i].name;
+                    }
+                    return row.courseId;
+                  } else {
+                    return "not found";
+                  }
+                },
+              },
+              { field: "remark", title: "备注", width: 200 },
+            ],
+          ],
+          toolbar: "#toolbar",
+          onBeforeLoad: function () {
+            try {
+              $("#studentList").combobox("getData");
+            } catch (err) {
+              preLoadClazz();
+            }
+          },
+        });
+
+        function preLoadClazz() {
+          $("#studentList").combobox({
+            width: "150",
+            height: "25",
+            valueField: "id",
+            textField: "username",
+            multiple: false, //可多选
+            editable: false, //不可编辑
+            method: "post",
+            // url: [[@{/student/getStudentList(from=combox)}]],
+          });
+          $("#courseList").combobox({
+            width: "150",
+            height: "25",
+            valueField: "id",
+            textField: "name",
+            multiple: false, //可多选
+            editable: false, //不可编辑
+            method: "post",
+            // url: [[@{/course/getCourseList(from=combox)}]],
+          });
+        }
+
+        //设置工具类按钮
+        $("#add").click(function () {
+          $("#addDialog").dialog("open");
+        });
+
+        //设置导入工具类按钮
+        $("#import").click(function () {
+          $("#importDialog").dialog("open");
+        });
+
+        //设置导入窗口
+        $("#importDialog").dialog({
+          title: "导入测量文件",
+          width: 450,
+          height: 150,
+          iconCls: "icon-add",
+          modal: true,
+          collapsible: false,
+          minimizable: false,
+          maximizable: false,
+          draggable: true,
+          closed: true,
+          buttons: [
+            {
+              text: "确认导入",
+              plain: true,
+              iconCls: "icon-book-add",
+              handler: function () {
+                let validate = $("#importForm").form("validate");
+                if (!validate) {
+                  $.messager.alert("消息提醒", "请选择文件!", "warning");
+                } else {
+                  importScore();
+                  $("#importDialog").dialog("close");
+                }
+              },
+            },
+          ],
+        });
+
+        //导入文件的函数 importScore
+        function importScore() {
+          $("#importForm").submit();
+          let interval = setInterval(function () {
+            let message = $(window.frames["import_target"].document)
+              .find("#message")
+              .text();
+            if (message != null && message !== "") {
+              $.messager.progress("close");
+              $.messager.alert("消息提醒", message, "info");
+              $("#dataList").datagrid("reload");
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      });
+      /*]]>*/
+    </script>
+  </head>
+  <body>
+    <!-- 数据列表 -->
+    <table id="dataList" cellspacing="0" cellpadding="0"></table>
+    <!-- 工具栏 -->
+    <div id="toolbar">
+      <div style="float: left">
+        <a
+          id="add"
+          href="javascript:"
+          class="easyui-linkbutton"
+          data-options="iconCls:'icon-add',plain:true"
+          >添加</a
+        >
+      </div>
+      <div style="float: left" class="datagrid-btn-separator"></div>
+      <div style="float: left">
+        <a
+          id="import"
+          href="javascript:"
+          class="easyui-linkbutton"
+          data-options="iconCls:'icon-add',plain:true"
+          >上传</a
+        >
+      </div>
+      <div style="float: left" class="datagrid-btn-separator"></div>
+      <div style="float: left" class="datagrid-btn-separator"></div>
+      <div style="margin-top: 3px"></div>
+    </div>
+
+    <!-- 导入数据窗口 -->
+    <div id="importDialog" style="padding: 10px">
+      <form
+        id="importForm"
+        method="post"
+        enctype="multipart/form-data"
+        action="http://47.98.232.123/upload"
+        target="import_target"
+      >
+        <table cellpadding="8">
+          <tr>
+            <td>请选择文件:</td>
+            <td>
+              <input
+                class="easyui-filebox"
+                name="file"
+                data-options="required:true,min:0,precision:2, missingMessage:'请选择文件',prompt:'选择文件'"
+                style="width: 200px"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>桶路径:</td>
+            <td>
+              <input name="bucketName" type="text" />
+            </td>
+          </tr>
+          <tr>
+            <td>文件名:</td>
+            <td>
+              <input name="projectName" type="text" />
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+    <!-- 提交表单处理iframe框架 -->
+    <iframe id="import_target" name="import_target"></iframe>
+  </body>
+</html>

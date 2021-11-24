@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>人员信息</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/default/easyui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/icon.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/themes/color.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/lib/easyui/demo/demo.css}">
+    <script type="text/javascript" th:src="@{/lib/easyui/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/easyui/jquery.easyui.min.js}"></script>
+</head>
+<body>
+
+<table id="dg" title="人员信息" class="easyui-datagrid" style="width:100%;height:600px"
+       url="./get_admin"
+       toolbar="#toolbar" pagination="true"
+       rownumbers="true" fitColumns="true" singleSelect="true">
+    <thead>
+    <tr>
+        <th field="username" width="50">用户名</th>
+        <th field="password" width="50">密码</th>
+        <th field="company" width="50">公司</th>
+    </tr>
+    </thead>
+</table>
+
+<div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true"
+       onclick="newUser()">添加人员</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true"
+       onclick="editUser()">编辑人员</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true"
+       onclick="destroyUser()">删除人员</a>
+</div>
+
+
+<div id="dlg" class="easyui-dialog" style="width:400px;height:280px;padding:10px 20px"
+     closed="true" buttons="#dlg-buttons">
+    <div class="ftitle">人员信息</div>
+    <form id="fm" method="post">
+        <div class="fitem">
+            <label>用户名:</label>
+            <input name="username" class="easyui-validatebox" required="true">
+        </div>
+        <div class="fitem">
+            <label>密码:</label>
+            <input name="password" class="easyui-validatebox" required="true">
+        </div>
+        <div class="fitem">
+            <label>公司:</label>
+            <input name="company" class="easyui-validatebox" required="true">
+        </div>
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveUser()">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel"
+       onclick="$('#dlg').dialog('close')">取消</a>
+</div>
+</body>
+<script th:src="@{/js/root/person.js}"></script>
+</html>
