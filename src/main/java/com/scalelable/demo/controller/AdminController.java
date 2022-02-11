@@ -7,6 +7,7 @@ import com.scalelable.demo.utils.MinioService;
 import com.scalelable.demo.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -321,8 +324,8 @@ public class AdminController {
 
     @ResponseBody
     @GetMapping("/download_project")
-    public ResponseEntity<byte[]> downloadProject(@RequestParam String prefix,
-                                                  Principal principal, HttpServletRequest request) {
+    public ResponseEntity<InputStreamResource> downloadProject(@RequestParam String prefix,
+                                                               Principal principal, HttpServletRequest request) {
         String bucketName = adminService.getAdminBucketByUsername(principal.getName());
         return responseUtils.getMinioFiles(bucketName, prefix, minioService, request);
     }
@@ -416,14 +419,14 @@ public class AdminController {
 
     @ResponseBody
     @GetMapping("/download_information")
-    public ResponseEntity<byte[]> downloadInformation(@RequestParam String prefix, HttpServletRequest request) {
+    public ResponseEntity<InputStreamResource> downloadInformation(@RequestParam String prefix, HttpServletRequest request) {
         return responseUtils.getMinioFiles(InformationFile, prefix, minioService, request);
     }
 
     @ResponseBody
     @GetMapping("/preview_information")
-    public ResponseEntity<byte[]> previewInformation(@RequestParam String prefix, HttpServletRequest request) {
-        ResponseEntity<byte[]> entity = responseUtils.getMinioFiles(InformationFile, prefix, minioService, request);
+    public ResponseEntity<InputStreamResource> previewInformation(@RequestParam String prefix, HttpServletRequest request) {
+        ResponseEntity<InputStreamResource> entity = responseUtils.getMinioFiles(InformationFile, prefix, minioService, request);
         HttpHeaders headers = entity.getHeaders();
         return ResponseEntity.ok()
                 .header("Content-Type", String.valueOf(headers.getContentType()))

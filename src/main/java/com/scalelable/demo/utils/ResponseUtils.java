@@ -1,5 +1,6 @@
 package com.scalelable.demo.utils;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -7,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -16,20 +19,23 @@ import java.util.Map;
 
 @Component
 public class ResponseUtils {
-    public ResponseEntity<byte[]> getMinioFiles(String bucketName, String prefix,
-                                                MinioService minioService, HttpServletRequest request) {
+    public ResponseEntity<InputStreamResource> getMinioFiles(String bucketName, String prefix,
+                                                             MinioService minioService, HttpServletRequest request) {
         try {
             Map<String, Object> map = minioService.getFiles(bucketName, prefix);
-            ByteArrayOutputStream files = (ByteArrayOutputStream) map.get("files");
+            InputStream files = (InputStream) map.get("files");
+            long length = (long) map.get("length");
+            InputStreamResource resource = new InputStreamResource(files);
             String isZIP = (String) map.get("isZIP");
             String contentType = (String) map.get("contentType");
             String[] split = prefix.split("/");
             String filename = getFilename(request, split[split.length - 1] + isZIP);
+
             return ResponseEntity.ok()
                     .header("Content-Disposition", String.format("attachment; filename=%s", filename))
                     .header("Content-Type", contentType)
-                    .contentLength(files.size())
-                    .body(files.toByteArray());
+                    .contentLength(length)
+                    .body(resource);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println(e.getMessage());

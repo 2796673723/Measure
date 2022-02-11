@@ -7,6 +7,7 @@ import io.minio.Result;
 import io.minio.errors.*;
 import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
@@ -47,9 +48,9 @@ public class MinioService {
         Map<String, Object> map = new HashMap<>();
         try {
             InputStream inputStream = minioClient.getObject(bucketName, prefix);
-            IOUtils.copy(inputStream, outputStream, true);
             ObjectStat objectStat = minioClient.statObject(bucketName, prefix);
-            map.put("files", outputStream);
+            map.put("files", inputStream);
+            map.put("length", objectStat.length());
             map.put("contentType", objectStat.contentType());
             map.put("isZIP", "");
             return map;
@@ -76,7 +77,8 @@ public class MinioService {
             if (fileNum == 0) {
                 return null;
             }
-            map.put("files", outputStream);
+            map.put("files", new ByteArrayInputStream(outputStream.toByteArray()));
+            map.put("length", (long) outputStream.size());
             map.put("contentType", "application/zip");
             map.put("isZIP", ".zip");
             return map;
